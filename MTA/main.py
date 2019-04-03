@@ -1,12 +1,1 @@
- import matplotlib.pyplot as plt
- import pandas as pd
- import numpy as np
- import seaborn as sb
- import datetime as dt
-
-#to do - compile mta txt files into single csvm then add below.
-
-
- df = pd.read_csv('')
-    df.head()
-              
+import matplotlib.pyplot as pltimport pandas as pdimport numpy as npimport seaborn as sbimport datetime as dt#specifying data type as per numpy error in columns 9/10... 1.8gb files are not great for dtype guessing.df = pd.read_csv('output.csv')df.head()#Calculate # of Entriesdf['DELTA'] = df['ENTRIES'].diff().abs()df.fillna(0, inplace=True)#filter out outliersmask_entry = (df['DELTA'] > 86400)df.ix[mask_entry, 'DELTA'] = 0#Calculate Number of linesdf['LINE_COUNT'] = df['LINENAME'].map(len)#Normalize station counts by # of linesdf['ENTRIES_PER_LINE'] = df['DELTA']/df['LINE_COUNT']df['DATE'] = pd.to_datetime(df['DATE'], format = '%m/%d/%Y')#Aggregate Total Entries and Entries per Line by Station and Datedf_station = df.groupby(['STATION', 'DATE', 'LINENAME', 'LINE_COUNT'])['DELTA','ENTRIES_PER_LINE'].sum().reset_index()#todo visualisation          
